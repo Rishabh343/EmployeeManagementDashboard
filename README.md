@@ -81,43 +81,6 @@ src/
 ├── App.jsx
 └── main.jsx
 ```
-
----
-
-## Installation
-
-Clone repository:
-
-```bash
-git clone <repository-url>
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Run development server:
-
-```bash
-npm run dev
-```
-
-Build project:
-
-```bash
-npm run build
-```
-
-Preview production build:
-
-```bash
-npm run preview
-```
-
----
-
 ## Deployment
 
 Project deployed using **Vercel**.
@@ -146,14 +109,6 @@ https://dummyjson.com/users
 
 ---
 
-## Future Improvements
-
-- Backend authentication with JWT
-- Database integration
-- Pagination
-- Role-based access
-- Employee analytics charts
-- Profile upload via Cloudinary
 
 ---
 
