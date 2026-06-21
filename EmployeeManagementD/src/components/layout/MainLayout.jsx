@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { Outlet } from "react-router-dom";
@@ -6,6 +6,9 @@ import { ThemeContext } from "../common/ThemeContext";
 
 export default function MainLayout() {
   const { theme } = useContext(ThemeContext);
+
+  const [sidebarOpen, setSidebarOpen] =
+    useState(false);
 
   return (
     <div
@@ -15,15 +18,14 @@ export default function MainLayout() {
           : "bg-gray-900 text-white"
       }`}
     >
-      {/* Fixed Navbar */}
-      <Navbar />
+      <Navbar
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
 
-      {/* Body */}
       <div className="flex h-[calc(100vh-64px)]">
-        {/* Fixed Sidebar */}
-        <Sidebar />
+        <Sidebar sidebarOpen={sidebarOpen} />
 
-        {/* Only page content scrolls */}
         <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
         </main>

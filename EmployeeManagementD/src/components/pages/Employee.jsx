@@ -26,14 +26,7 @@ export default function Employee() {
     image: "",
   });
 
-  const columns = [
-    "Image",
-    "Name",
-    "Email",
-    "Department",
-    "Phone",
-    "Actions",
-  ];
+  const columns = ["Image", "Name", "Email", "Department", "Phone", "Actions"];
 
   const inputStyle =
     theme === "light"
@@ -41,14 +34,10 @@ export default function Employee() {
       : "bg-gray-800 text-white border-gray-600";
 
   const editButtonStyle =
-    theme === "light"
-      ? "bg-gray-200 text-black"
-      : "bg-gray-700 text-white";
+    theme === "light" ? "bg-gray-200 text-black" : "bg-gray-700 text-white";
 
   const departments = useMemo(() => {
-    return [
-      ...new Set(employees.map((emp) => emp.company.department)),
-    ];
+    return [...new Set(employees.map((emp) => emp.company.department))];
   }, [employees]);
 
   useEffect(() => {
@@ -64,12 +53,9 @@ export default function Employee() {
   const filteredEmployees = useMemo(() => {
     return employees
       .filter((emp) => {
-        const fullName =
-          `${emp.firstName} ${emp.lastName || ""}`.toLowerCase();
+        const fullName = `${emp.firstName} ${emp.lastName || ""}`.toLowerCase();
 
-        const matchesSearch = fullName.includes(
-          searchTerm.toLowerCase()
-        );
+        const matchesSearch = fullName.includes(searchTerm.toLowerCase());
 
         const matchesDepartment =
           selectedDepartment === "" ||
@@ -114,11 +100,7 @@ export default function Employee() {
   };
 
   const handleSave = () => {
-    if (
-      !formData.firstName ||
-      !formData.email ||
-      !formData.phone
-    ) {
+    if (!formData.firstName || !formData.email || !formData.phone) {
       alert("All fields required");
       return;
     }
@@ -137,7 +119,7 @@ export default function Employee() {
                 department: formData.department,
               },
             }
-          : emp
+          : emp,
       );
 
       setEmployees(updated);
@@ -154,7 +136,7 @@ export default function Employee() {
         },
       };
 
-      setEmployees([...employees, newEmployee]);
+      setEmployees([newEmployee, ...employees]);
     }
 
     setShowModal(false);
@@ -169,9 +151,7 @@ export default function Employee() {
   return (
     <div
       className={`p-6 min-h-screen ${
-        theme === "light"
-          ? "bg-gray-100 text-black"
-          : "bg-gray-900 text-white"
+        theme === "light" ? "bg-gray-100 text-black" : "bg-gray-900 text-white"
       }`}
     >
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
@@ -179,7 +159,11 @@ export default function Employee() {
 
         <Button
           onClick={openAddModal}
-          className="bg-black text-white"
+          className={`${
+            theme === "light"
+              ? "bg-black text-white hover:bg-gray-800"
+              : "bg-white text-black hover:bg-gray-200"
+          }`}
         >
           Add Employee
         </Button>
@@ -197,9 +181,7 @@ export default function Employee() {
         <select
           className={`border px-3 py-2 rounded w-full md:w-72 ${inputStyle}`}
           value={selectedDepartment}
-          onChange={(e) =>
-            setSelectedDepartment(e.target.value)
-          }
+          onChange={(e) => setSelectedDepartment(e.target.value)}
         >
           <option value="">All Departments</option>
 
@@ -235,9 +217,7 @@ export default function Employee() {
 
               <td className="px-4 py-3">{emp.email}</td>
 
-              <td className="px-4 py-3">
-                {emp.company.department}
-              </td>
+              <td className="px-4 py-3">{emp.company.department}</td>
 
               <td className="px-4 py-3">{emp.phone}</td>
 
@@ -301,17 +281,13 @@ export default function Employee() {
             className={`border p-2 rounded ${inputStyle}`}
           />
 
-          <input
-            name="image"
-            placeholder="Image URL"
-            value={formData.image}
-            onChange={handleChange}
-            className={`border p-2 rounded ${inputStyle}`}
-          />
-
           <Button
             onClick={handleSave}
-            className="bg-black text-white"
+            className={`${
+              theme === "light"
+                ? "bg-black text-white hover:bg-gray-800"
+                : "bg-white text-black hover:bg-gray-200"
+            }`}
           >
             Save
           </Button>

@@ -18,20 +18,25 @@ export default function Sidebar({ sidebarOpen }) {
 
   return (
     <aside
-        className={`
-    fixed md:static top-0 left-0 z-50
-    w-60 h-screen
-    transform transition-transform duration-300
-    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
-    md:translate-x-0
-    md:h-auto md:min-h-[calc(100vh-64px)]
-    border-r
-    ${
-      theme === "light"
-        ? "bg-white border-gray-300 text-black"
-        : "bg-gray-800 border-gray-600 text-white"
-    }
-  `}
+      className={`
+        fixed md:static
+        top-16 left-0 z-10
+        w-60
+        h-[calc(100vh-64px)]
+        md:h-auto
+        md:min-h-[calc(100vh-64px)]
+        md:mt-2
+        transform transition-transform duration-300
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0
+        border-r p-5
+        shadow-[0_2px_8px_rgba(0,0,0,0.08)]
+        ${
+          theme === "light"
+            ? "bg-white border-gray-300 text-black"
+            : "bg-gray-800 border-gray-600 text-white"
+        }
+      `}
     >
       <nav className="flex flex-col gap-4">
         <NavLink to="/" className={linkStyle}>

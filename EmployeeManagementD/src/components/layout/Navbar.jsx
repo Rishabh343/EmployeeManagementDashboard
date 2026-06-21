@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { ThemeContext } from "../common/ThemeContext";
 
-export default function Navbar() {
+export default function Navbar({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
   const { theme, toggleTheme } = useContext(ThemeContext);
 
@@ -17,7 +17,16 @@ export default function Navbar() {
         theme === "light" ? "bg-white text-black" : "bg-gray-800 text-white"
       }`}
     >
-      <h2 className="text-xl font-semibold">Employee Portal</h2>
+      <div className="flex items-center gap-4">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="md:hidden text-2xl"
+        >
+          {sidebarOpen ? "✕" : "☰"}
+        </button>
+
+        <h1 className="font-bold text-xl">Employee Portal</h1>
+      </div>
 
       <div className="flex items-center gap-4">
         <button
