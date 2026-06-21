@@ -9,16 +9,22 @@ export default function MainLayout() {
 
   return (
     <div
-      className={`min-h-screen ${
-        theme === "light" ? "bg-gray-50 text-black" : "bg-gray-900 text-white"
+      className={`h-screen overflow-hidden ${
+        theme === "light"
+          ? "bg-gray-50 text-black"
+          : "bg-gray-900 text-white"
       }`}
     >
+      {/* Fixed Navbar */}
       <Navbar />
 
-      <div className="grid grid-cols-[240px_1fr]">
+      {/* Body */}
+      <div className="flex h-[calc(100vh-64px)]">
+        {/* Fixed Sidebar */}
         <Sidebar />
 
-        <main className="p-6">
+        {/* Only page content scrolls */}
+        <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
         </main>
       </div>

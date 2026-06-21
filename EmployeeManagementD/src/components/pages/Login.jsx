@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
+import Loader from "../common/Loader";
+import { ThemeContext } from "../common/ThemeContext";
+import ThemeButton from "../common/ThemeButton.jsx";
 export default function Login() {
   const navigate = useNavigate();
-
+  const { theme } = useContext(ThemeContext);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setLoginData({
@@ -22,111 +25,126 @@ export default function Login() {
 
   const handleLogin = () => {
     setError("");
+    setIsLoading(true);
 
-    // Empty fields validation
-    if (!loginData.email || !loginData.password) {
-      setError("All fields are required");
-      return;
-    }
+    setTimeout(() => {
+      if (!loginData.email || !loginData.password) {
+        setError("All fields are required");
+        setIsLoading(false);
+        return;
+      }
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(loginData.email)) {
-      setError("Please enter a valid email address");
-      return;
-    }
+      if (!emailRegex.test(loginData.email)) {
+        setError("Please enter a valid email address");
+        setIsLoading(false);
+        return;
+      }
 
-    // Get registered user
-    const user = JSON.parse(localStorage.getItem("registeredUser"));
+      const user = JSON.parse(localStorage.getItem("registeredUser"));
 
-    if (!user) {
-      setError("No user found. Please signup first.");
-      return;
-    }
+      if (!user) {
+        setError("No user found. Please signup first.");
+        setIsLoading(false);
+        return;
+      }
 
-    // Check credentials
-    if (
-      user.email === loginData.email &&
-      user.password === loginData.password
-    ) {
-      alert("Login Successful!");
-
-      localStorage.setItem("isLoggedIn", "true");
-
-      navigate("/");
-    } else {
-      setError("Invalid Email or Password");
-    }
+      if (
+        user.email === loginData.email &&
+        user.password === loginData.password
+      ) {
+        localStorage.setItem("isLoggedIn", "true");
+        setIsLoading(false);
+        navigate("/");
+      } else {
+        setError("Invalid Email or Password");
+        setIsLoading(false);
+      }
+    }, 1200);
   };
+
+  if (isLoading) {
+    return <Loader />;
+  }
+  const inputStyle =
+    theme === "light" ? "bg-white text-black" : "bg-gray-700 text-white";
 
   return (
     <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "10px",
-        minHeight: "90vh",
-      }}
+      className={`relative min-h-screen flex items-center justify-center px-4 ${
+        theme === "light" ? "bg-gray-100" : "bg-gray-900"
+      }`}
     >
-      <h1>Login</h1>
+      <ThemeButton />
 
-      <input
-        type="email"
-        name="email"
-        placeholder="Email"
-        value={loginData.email}
-        onChange={handleChange}
-        style={{
-          padding: "8px",
-          width: "250px",
-          border: error ? "1px solid red" : "1px solid #ccc",
-        }}
-      />
-
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={loginData.password}
-        onChange={handleChange}
-        style={{
-          padding: "8px",
-          width: "250px",
-          border: error ? "1px solid red" : "1px solid #ccc",
-        }}
-      />
-      <p>
-        <Link to="/resetpassword">Forget Password ?</Link>
-      </p>
-
-      {error && (
-        <p
-          style={{
-            color: "red",
-            fontSize: "14px",
-            margin: 0,
-          }}
-        >
-          {error}
-        </p>
-      )}
-
-      <button
-        onClick={handleLogin}
-        style={{
-          padding: "8px 16px",
-          cursor: "pointer",
-        }}
+      <div
+        className={`w-full max-w-md shadow-lg rounded-xl p-8 ${
+          theme === "light" ? "bg-white text-black" : "bg-gray-800 text-white"
+        }`}
       >
-        Login
-      </button>
+        <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
 
-      <p>
-        Don't have an account? <Link to="/signup">Signup</Link>
-      </p>
+        <div className="flex flex-col gap-4">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={loginData.email}
+            onChange={handleChange}
+            className={`w-full px-4 py-3 rounded border outline-none ${
+              error ? "border-red-500" : "border-gray-300"
+            } ${inputStyle}`}
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={loginData.password}
+            onChange={handleChange}
+            className={`w-full px-4 py-3 rounded border outline-none ${
+              error ? "border-red-500" : "border-gray-300"
+            } ${inputStyle}`}
+          />
+
+          <div className="text-right text-sm">
+            <Link
+              to="/resetpassword"
+              className={`hover:underline ${
+                theme === "light" ? "text-blue-600" : "text-blue-400"
+              }`}
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          <button
+            onClick={handleLogin}
+            className={`w-full py-3 rounded transition ${
+              theme === "light"
+                ? "bg-black text-white hover:bg-gray-800"
+                : "bg-white text-black hover:bg-gray-200"
+            }`}
+          >
+            Login
+          </button>
+
+          <p className="text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <Link
+              to="/signup"
+              className={`font-medium hover:underline ${
+                theme === "light" ? "text-blue-600" : "text-blue-400"
+              }`}
+            >
+              Signup
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

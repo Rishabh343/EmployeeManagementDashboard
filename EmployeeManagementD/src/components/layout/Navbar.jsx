@@ -7,12 +7,13 @@ export default function Navbar() {
   const { theme, toggleTheme } = useContext(ThemeContext);
 
   const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
     navigate("/login");
   };
 
   return (
     <nav
-      className={`h-16 px-5 flex justify-between items-center shadow-md ${
+      className={`h-16 px-5 flex justify-between items-center shadow ${
         theme === "light" ? "bg-white text-black" : "bg-gray-800 text-white"
       }`}
     >
@@ -25,8 +26,6 @@ export default function Navbar() {
         >
           {theme === "light" ? "Dark Mode" : "Light Mode"}
         </button>
-
-        <span>Welcome, Admin</span>
 
         <button
           onClick={handleLogout}

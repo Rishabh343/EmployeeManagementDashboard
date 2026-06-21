@@ -1,9 +1,10 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { EmployeeContext } from "../common/EmployeeContext";
 import { ThemeContext } from "../common/ThemeContext";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 import Table from "../common/Table";
+import Loader from "../common/Loader";
 
 export default function Employee() {
   const { employees, setEmployees } = useContext(EmployeeContext);
@@ -14,6 +15,8 @@ export default function Employee() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
+
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -32,29 +35,49 @@ export default function Employee() {
     "Actions",
   ];
 
+  const inputStyle =
+    theme === "light"
+      ? "bg-white text-black border-gray-300"
+      : "bg-gray-800 text-white border-gray-600";
+
+  const editButtonStyle =
+    theme === "light"
+      ? "bg-gray-200 text-black"
+      : "bg-gray-700 text-white";
+
   const departments = useMemo(() => {
     return [
-      ...new Set(
-        employees.map((emp) => emp.company.department)
-      ),
+      ...new Set(employees.map((emp) => emp.company.department)),
     ];
   }, [employees]);
 
+  useEffect(() => {
+    setSearchLoading(true);
+
+    const timer = setTimeout(() => {
+      setSearchLoading(false);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, selectedDepartment]);
+
   const filteredEmployees = useMemo(() => {
-    return employees.filter((emp) => {
-      const fullName =
-        `${emp.firstName} ${emp.lastName || ""}`.toLowerCase();
+    return employees
+      .filter((emp) => {
+        const fullName =
+          `${emp.firstName} ${emp.lastName || ""}`.toLowerCase();
 
-      const matchesSearch = fullName.includes(
-        searchTerm.toLowerCase()
-      );
+        const matchesSearch = fullName.includes(
+          searchTerm.toLowerCase()
+        );
 
-      const matchesDepartment =
-        selectedDepartment === "" ||
-        emp.company.department === selectedDepartment;
+        const matchesDepartment =
+          selectedDepartment === "" ||
+          emp.company.department === selectedDepartment;
 
-      return matchesSearch && matchesDepartment;
-    });
+        return matchesSearch && matchesDepartment;
+      })
+      .slice(0, 10);
   }, [employees, searchTerm, selectedDepartment]);
 
   const handleChange = (e) => {
@@ -138,17 +161,21 @@ export default function Employee() {
   };
 
   const handleDelete = (id) => {
-    setEmployees(
-      employees.filter((emp) => emp.id !== id)
-    );
+    setEmployees(employees.filter((emp) => emp.id !== id));
   };
 
+  if (!employees.length) return <Loader />;
+
   return (
-    <div className="p-6">
-      <div className="flex justify-between mb-6">
-        <h1 className="text-2xl font-bold">
-          Employee Management
-        </h1>
+    <div
+      className={`p-6 min-h-screen ${
+        theme === "light"
+          ? "bg-gray-100 text-black"
+          : "bg-gray-900 text-white"
+      }`}
+    >
+      <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
+        <h1 className="text-2xl font-bold">Employee Management</h1>
 
         <Button
           onClick={openAddModal}
@@ -158,19 +185,17 @@ export default function Employee() {
         </Button>
       </div>
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
         <input
           type="text"
           placeholder="Search by name"
-          className="border px-3 py-2 rounded"
+          className={`border px-3 py-2 rounded w-full md:w-72 ${inputStyle}`}
           value={searchTerm}
-          onChange={(e) =>
-            setSearchTerm(e.target.value)
-          }
+          onChange={(e) => setSearchTerm(e.target.value)}
         />
 
         <select
-          className="border px-3 py-2 rounded"
+          className={`border px-3 py-2 rounded w-full md:w-72 ${inputStyle}`}
           value={selectedDepartment}
           onChange={(e) =>
             setSelectedDepartment(e.target.value)
@@ -186,66 +211,62 @@ export default function Employee() {
         </select>
       </div>
 
-      <Table columns={columns}>
-        {filteredEmployees.map((emp) => (
-          <tr key={emp.id} className="border-b">
-            <td className="px-4 py-3">
-              <img
-                src={emp.image}
-                alt=""
-                className="w-12 h-12 rounded-full"
-              />
-            </td>
+      {searchLoading ? (
+        <Loader />
+      ) : filteredEmployees.length === 0 ? (
+        <div className="text-center text-xl font-semibold mt-10">
+          No Result Found
+        </div>
+      ) : (
+        <Table columns={columns}>
+          {filteredEmployees.map((emp) => (
+            <tr key={emp.id} className="border-b">
+              <td className="px-4 py-3">
+                <img
+                  src={emp.image}
+                  alt=""
+                  className="w-12 h-12 rounded-full"
+                />
+              </td>
 
-            <td className="px-4 py-3">
-              {emp.firstName} {emp.lastName}
-            </td>
+              <td className="px-4 py-3">
+                {emp.firstName} {emp.lastName}
+              </td>
 
-            <td className="px-4 py-3">
-              {emp.email}
-            </td>
+              <td className="px-4 py-3">{emp.email}</td>
 
-            <td className="px-4 py-3">
-              {emp.company.department}
-            </td>
+              <td className="px-4 py-3">
+                {emp.company.department}
+              </td>
 
-            <td className="px-4 py-3">
-              {emp.phone}
-            </td>
+              <td className="px-4 py-3">{emp.phone}</td>
 
-            <td className="px-4 py-3">
-              <div className="flex gap-2">
-                <Button
-                  onClick={() =>
-                    openEditModal(emp)
-                  }
-                  className="bg-gray-200"
-                >
-                  Edit
-                </Button>
+              <td className="px-4 py-3">
+                <div className="flex flex-col lg:flex-row gap-2">
+                  <Button
+                    onClick={() => openEditModal(emp)}
+                    className={editButtonStyle}
+                  >
+                    Edit
+                  </Button>
 
-                <Button
-                  onClick={() =>
-                    handleDelete(emp.id)
-                  }
-                  className="bg-red-500 text-white"
-                >
-                  Delete
-                </Button>
-              </div>
-            </td>
-          </tr>
-        ))}
-      </Table>
+                  <Button
+                    onClick={() => handleDelete(emp.id)}
+                    className="bg-red-500 text-white"
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </Table>
+      )}
 
       <Modal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
-        title={
-          editEmployee
-            ? "Edit Employee"
-            : "Add Employee"
-        }
+        title={editEmployee ? "Edit Employee" : "Add Employee"}
       >
         <div className="flex flex-col gap-3">
           <input
@@ -253,7 +274,7 @@ export default function Employee() {
             placeholder="Name"
             value={formData.firstName}
             onChange={handleChange}
-            className="border p-2"
+            className={`border p-2 rounded ${inputStyle}`}
           />
 
           <input
@@ -261,7 +282,7 @@ export default function Employee() {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="border p-2"
+            className={`border p-2 rounded ${inputStyle}`}
           />
 
           <input
@@ -269,7 +290,7 @@ export default function Employee() {
             placeholder="Phone"
             value={formData.phone}
             onChange={handleChange}
-            className="border p-2"
+            className={`border p-2 rounded ${inputStyle}`}
           />
 
           <input
@@ -277,7 +298,7 @@ export default function Employee() {
             placeholder="Department"
             value={formData.department}
             onChange={handleChange}
-            className="border p-2"
+            className={`border p-2 rounded ${inputStyle}`}
           />
 
           <input
@@ -285,7 +306,7 @@ export default function Employee() {
             placeholder="Image URL"
             value={formData.image}
             onChange={handleChange}
-            className="border p-2"
+            className={`border p-2 rounded ${inputStyle}`}
           />
 
           <Button
