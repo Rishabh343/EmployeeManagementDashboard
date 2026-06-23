@@ -3,9 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import Loader from "../common/Loader";
 import { ThemeContext } from "../common/ThemeContext";
 import ThemeButton from "../common/ThemeButton.jsx";
+
 export default function Login() {
   const navigate = useNavigate();
   const { theme } = useContext(ThemeContext);
+
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -64,26 +66,35 @@ export default function Login() {
     }, 1200);
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (isLoading) return <Loader />;
+
   const inputStyle =
-    theme === "light" ? "bg-white text-black" : "bg-gray-700 text-white";
+    theme === "light"
+      ? "bg-white text-black border-gray-300"
+      : "bg-gray-700 text-white border-gray-600";
 
   return (
     <div
       className={`relative min-h-screen flex items-center justify-center px-4 ${
-        theme === "light" ? "bg-gray-100" : "bg-gray-900"
+        theme === "light" ? "bg-[#f8f6f2]" : "bg-gray-900"
       }`}
     >
       <ThemeButton />
 
       <div
-        className={`w-full max-w-md shadow-lg rounded-xl p-8 ${
-          theme === "light" ? "bg-white text-black" : "bg-gray-800 text-white"
+        className={`w-full max-w-md rounded-2xl p-8 border shadow-xl ${
+          theme === "light"
+            ? "bg-white border-gray-200 text-black"
+            : "bg-gray-800 border-gray-700 text-white"
         }`}
       >
-        <h1 className="text-3xl font-bold text-center mb-6">Login</h1>
+        <h1 className="text-3xl font-bold text-center mb-2">
+          Welcome Back
+        </h1>
+
+        <p className="text-center text-gray-500 mb-6">
+          Login to Employee Portal
+        </p>
 
         <div className="flex flex-col gap-4">
           <input
@@ -92,8 +103,8 @@ export default function Login() {
             placeholder="Email"
             value={loginData.email}
             onChange={handleChange}
-            className={`w-full px-4 py-3 rounded border outline-none ${
-              error ? "border-red-500" : "border-gray-300"
+            className={`w-full px-4 py-3 rounded-lg border outline-none focus:ring-2 focus:ring-yellow-400 ${
+              error ? "border-red-500" : ""
             } ${inputStyle}`}
           />
 
@@ -103,8 +114,8 @@ export default function Login() {
             placeholder="Password"
             value={loginData.password}
             onChange={handleChange}
-            className={`w-full px-4 py-3 rounded border outline-none ${
-              error ? "border-red-500" : "border-gray-300"
+            className={`w-full px-4 py-3 rounded-lg border outline-none focus:ring-2 focus:ring-yellow-400 ${
+              error ? "border-red-500" : ""
             } ${inputStyle}`}
           />
 
@@ -112,22 +123,24 @@ export default function Login() {
             <Link
               to="/resetpassword"
               className={`hover:underline ${
-                theme === "light" ? "text-blue-600" : "text-blue-400"
+                theme === "light"
+                  ? "text-yellow-600"
+                  : "text-yellow-400"
               }`}
             >
               Forgot Password?
             </Link>
           </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && (
+            <p className="text-red-500 text-sm">
+              {error}
+            </p>
+          )}
 
           <button
             onClick={handleLogin}
-            className={`w-full py-3 rounded transition ${
-              theme === "light"
-                ? "bg-black text-white hover:bg-gray-800"
-                : "bg-white text-black hover:bg-gray-200"
-            }`}
+            className="w-full py-3 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-medium transition"
           >
             Login
           </button>
@@ -136,8 +149,10 @@ export default function Login() {
             Don&apos;t have an account?{" "}
             <Link
               to="/signup"
-              className={`font-medium hover:underline ${
-                theme === "light" ? "text-blue-600" : "text-blue-400"
+              className={`font-semibold hover:underline ${
+                theme === "light"
+                  ? "text-yellow-600"
+                  : "text-yellow-400"
               }`}
             >
               Signup

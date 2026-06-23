@@ -7,20 +7,13 @@ export default function DashBoard() {
   const { theme } = useContext(ThemeContext);
 
   const totalEmployees = employees.length;
-  const totalMale = employees.filter(
-    (emp) => emp.gender === "male"
-  ).length;
 
-  const totalFemale = employees.filter(
-    (emp) => emp.gender === "female"
-  ).length;
+  const totalMale = employees.filter((emp) => emp.gender === "male").length;
+
+  const totalFemale = employees.filter((emp) => emp.gender === "female").length;
 
   const departments = [
-    ...new Set(
-      employees.map(
-        (emp) => emp.company.department
-      )
-    ),
+    ...new Set(employees.map((emp) => emp.company.department)),
   ];
 
   const topEmployees = useMemo(() => {
@@ -29,114 +22,108 @@ export default function DashBoard() {
 
   const cardStyle =
     theme === "light"
-      ? "bg-white"
-      : "bg-gray-800";
+      ? "bg-white border border-gray-200 shadow-md"
+      : "bg-gray-800 border border-gray-700 shadow-lg";
 
   return (
     <div
       className={`min-h-screen p-8 ${
-        theme === "light"
-          ? "bg-gray-100 text-black"
-          : "bg-gray-900 text-white"
+        theme === "light" ? "bg-[#f8f6f2] text-black" : "bg-gray-900 text-white"
       }`}
     >
-      <h1 className="text-3xl font-bold mb-8">
+      <h1 className="text-4xl font-bold mb-2 border-l-4 border-yellow-500 pl-4">
         Dashboard
       </h1>
 
+      <p className="text-gray-500 mb-8">Overview of employee statistics</p>
+
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className={`${cardStyle} rounded-xl shadow p-6`}>
-          <h2>Total Employees</h2>
-          <p className="text-4xl font-bold mt-3">
+        <div
+          className={`${cardStyle} rounded-2xl p-6 hover:scale-[1.02] transition`}
+        >
+          <h2 className="text-gray-500 font-medium">Total Employees</h2>
+          <p className="text-4xl font-bold mt-3 text-yellow-500">
             {totalEmployees}
           </p>
         </div>
 
-        <div className={`${cardStyle} rounded-xl shadow p-6`}>
-          <h2>Total Departments</h2>
-          <p className="text-4xl font-bold mt-3">
+        <div
+          className={`${cardStyle} rounded-2xl p-6 hover:scale-[1.02] transition`}
+        >
+          <h2 className="text-gray-500 font-medium">Total Departments</h2>
+          <p className="text-4xl font-bold mt-3 text-yellow-500">
             {departments.length}
           </p>
         </div>
 
-        <div className={`${cardStyle} rounded-xl shadow p-6`}>
-          <h2>Male Employees</h2>
-          <p className="text-4xl font-bold mt-3">
-            {totalMale}
-          </p>
+        <div
+          className={`${cardStyle} rounded-2xl p-6 hover:scale-[1.02] transition`}
+        >
+          <h2 className="text-gray-500 font-medium">Male Employees</h2>
+          <p className="text-4xl font-bold mt-3 text-yellow-500">{totalMale}</p>
         </div>
 
-        <div className={`${cardStyle} rounded-xl shadow p-6`}>
-          <h2>Female Employees</h2>
-          <p className="text-4xl font-bold mt-3">
+        <div
+          className={`${cardStyle} rounded-2xl p-6 hover:scale-[1.02] transition`}
+        >
+          <h2 className="text-gray-500 font-medium">Female Employees</h2>
+          <p className="text-4xl font-bold mt-3 text-yellow-500">
             {totalFemale}
           </p>
         </div>
       </div>
 
-      {/* Top Employees Table */}
+      {/* Top Employees */}
       <div
-        className={`rounded-xl shadow p-6 ${
+        className={`rounded-2xl p-6 border ${
           theme === "light"
-            ? "bg-white"
-            : "bg-gray-800"
+            ? "bg-white border-gray-200 shadow-md"
+            : "bg-gray-800 border-gray-700 shadow-lg"
         }`}
       >
-        <h2 className="text-xl font-bold mb-4">
-          Top 5 Employees
-        </h2>
+        <h2 className="text-2xl font-bold mb-6">Top 5 Employees</h2>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px]">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-3">
-                  Image
-                </th>
-                <th className="text-left py-3">
-                  Name
-                </th>
-                <th className="text-left py-3">
-                  Email
-                </th>
-                <th className="text-left py-3">
-                  Department
-                </th>
-              </tr>
-            </thead>
+    
+        <div
+          className={`hidden md:grid grid-cols-4 px-4 py-3 text-sm font-semibold ${
+            theme === "light" ? "text-gray-500" : "text-gray-400"
+          }`}
+        >
+          <div>Image</div>
+          <div>Name</div>
+          <div>Email</div>
+          <div>Department</div>
+        </div>
 
-            <tbody>
-              {topEmployees.map((emp) => (
-                <tr
-                  key={emp.id}
-                  className="border-b"
-                >
-                  <td className="py-3">
-                    <img
-                      src={emp.image}
-                      alt=""
-                      className="w-10 h-10 rounded-full"
-                    />
-                  </td>
+        {/* Employee Cards */}
+        <div className="space-y-4">
+          {topEmployees.map((emp) => (
+            <div
+              key={emp.id}
+              className={`grid grid-cols-1 md:grid-cols-4 gap-4 items-center px-4 py-4 rounded-xl ${
+                theme === "light"
+                  ? "bg-gray-50 border border-gray-100"
+                  : "bg-gray-900 border border-gray-700"
+              }`}
+            >
+              <div>
+                <img
+                  src={emp.image}
+                  alt=""
+                  className="w-14 h-14 rounded-full object-cover border-2 border-yellow-400"
+                />
+              </div>
 
-                  <td>
-                    {emp.firstName}{" "}
-                    {emp.lastName}
-                  </td>
+              <div className="font-medium">
+                {emp.firstName} {emp.lastName}
+              </div>
 
-                  <td>{emp.email}</td>
+              <div className="break-all">{emp.email}</div>
 
-                  <td>
-                    {
-                      emp.company
-                        .department
-                    }
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              <div>{emp.company.department}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
