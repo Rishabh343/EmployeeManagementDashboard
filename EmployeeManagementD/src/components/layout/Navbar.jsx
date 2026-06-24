@@ -20,7 +20,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
           : "bg-gray-800/90 text-white border-gray-700"
       }`}
     >
-      {/* Left */}
+     
       <div className="flex items-center gap-3 md:gap-4">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -38,9 +38,9 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
         </h1>
       </div>
 
-      {/* Right */}
+      
       <div className="flex items-center gap-2 md:gap-3">
-        {/* Theme */}
+      
         <button
           onClick={toggleTheme}
           className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-xl border font-medium transition ${
@@ -55,7 +55,7 @@ export default function Navbar({ sidebarOpen, setSidebarOpen }) {
           </span>
         </button>
 
-        {/* Logout */}
+      
         <button
           onClick={handleLogout}
           className={`flex items-center gap-2 px-3 md:px-4 py-2 rounded-xl font-medium transition ${

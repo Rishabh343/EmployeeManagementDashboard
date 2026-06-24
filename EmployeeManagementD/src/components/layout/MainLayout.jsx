@@ -22,7 +22,7 @@ export default function MainLayout() {
       />
 
       <div className="flex h-[calc(100vh-64px)] relative">
-        {/* Mobile overlay */}
+       
         {sidebarOpen && (
           <div
             className="md:hidden fixed inset-0 bg-black/40 z-[5]"

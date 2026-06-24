@@ -37,7 +37,6 @@ export default function DashBoard() {
 
       <p className="text-gray-500 mb-8">Overview of employee statistics</p>
 
-      {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <div
           className={`${cardStyle} rounded-2xl p-6 hover:scale-[1.02] transition`}
@@ -74,7 +73,6 @@ export default function DashBoard() {
         </div>
       </div>
 
-      {/* Top Employees */}
       <div
         className={`rounded-2xl p-6 border ${
           theme === "light"
@@ -84,7 +82,6 @@ export default function DashBoard() {
       >
         <h2 className="text-2xl font-bold mb-6">Top 5 Employees</h2>
 
-    
         <div
           className={`hidden md:grid grid-cols-4 px-4 py-3 text-sm font-semibold ${
             theme === "light" ? "text-gray-500" : "text-gray-400"
@@ -96,7 +93,6 @@ export default function DashBoard() {
           <div>Department</div>
         </div>
 
-        {/* Employee Cards */}
         <div className="space-y-4">
           {topEmployees.map((emp) => (
             <div
