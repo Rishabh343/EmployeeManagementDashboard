@@ -8,13 +8,11 @@ export default function DashBoard() {
 
   const totalEmployees = employees.length;
 
-  const totalMale = employees.filter((emp) => emp.gender === "male").length;
+  // const totalMale = employees.filter((emp) => emp.gender === "male").length;
 
-  const totalFemale = employees.filter((emp) => emp.gender === "female").length;
+  // const totalFemale = employees.filter((emp) => emp.gender === "female").length;
 
-  const departments = [
-    ...new Set(employees.map((emp) => emp.company.department)),
-  ];
+  const departments = [...new Set(employees.map((emp) => emp.department))];
 
   const topEmployees = useMemo(() => {
     return employees.slice(0, 5);
@@ -56,21 +54,19 @@ export default function DashBoard() {
           </p>
         </div>
 
-        <div
+        {/* <div
           className={`${cardStyle} rounded-2xl p-6 hover:scale-[1.02] transition`}
         >
           <h2 className="text-gray-500 font-medium">Male Employees</h2>
-          <p className="text-4xl font-bold mt-3 text-yellow-500">{totalMale}</p>
+          <p className="text-4xl font-bold mt-3 text-yellow-500">5</p>
         </div>
 
         <div
           className={`${cardStyle} rounded-2xl p-6 hover:scale-[1.02] transition`}
         >
           <h2 className="text-gray-500 font-medium">Female Employees</h2>
-          <p className="text-4xl font-bold mt-3 text-yellow-500">
-            {totalFemale}
-          </p>
-        </div>
+          <p className="text-4xl font-bold mt-3 text-yellow-500">0</p>
+        </div> */}
       </div>
 
       <div
@@ -105,19 +101,17 @@ export default function DashBoard() {
             >
               <div>
                 <img
-                  src={emp.image}
+                  src={emp.profileImage}
                   alt=""
                   className="w-14 h-14 rounded-full object-cover border-2 border-yellow-400"
                 />
               </div>
 
-              <div className="font-medium">
-                {emp.firstName} {emp.lastName}
-              </div>
+              <div className="font-medium">{emp.fullName}</div>
 
               <div className="break-all">{emp.email}</div>
 
-              <div>{emp.company.department}</div>
+              <div>{emp.department}</div>
             </div>
           ))}
         </div>

@@ -8,9 +8,13 @@ export default function EmployeeProvider({ children }) {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get("https://dummyjson.com/users");
+        const response = await axios.get(
+          "https://crud-raoy.onrender.com/api/employee",
+        );
 
-        setEmployees(response.data.users);
+        setEmployees(response.data.data);
+        console.log(response.data.data);
+        response.data.users;
       } catch (error) {
         console.log(error);
       }

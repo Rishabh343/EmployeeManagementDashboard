@@ -19,11 +19,11 @@ export default function Employee() {
   const [searchLoading, setSearchLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    firstName: "",
+    fullName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
     department: "",
-    image: "",
+    profileImage: "",
   });
 
   const columns = ["Image", "Name", "Email", "Department", "Phone", "Actions"];
@@ -37,7 +37,7 @@ export default function Employee() {
     theme === "light" ? "bg-gray-200 text-black" : "bg-gray-700 text-white";
 
   const departments = useMemo(() => {
-    return [...new Set(employees.map((emp) => emp.company.department))];
+    return [...new Set(employees.map((emp) => emp.department))];
   }, [employees]);
 
   useEffect(() => {
@@ -53,17 +53,16 @@ export default function Employee() {
   const filteredEmployees = useMemo(() => {
     return employees
       .filter((emp) => {
-        const fullName = `${emp.firstName} ${emp.lastName || ""}`.toLowerCase();
+        const fullName = `${emp.fullName} `.toLowerCase();
 
         const matchesSearch = fullName.includes(searchTerm.toLowerCase());
 
         const matchesDepartment =
-          selectedDepartment === "" ||
-          emp.company.department === selectedDepartment;
+          selectedDepartment === "" || emp.department === selectedDepartment;
 
         return matchesSearch && matchesDepartment;
       })
-      .slice(0, 10);
+      .slice(0, 10);    
   }, [employees, searchTerm, selectedDepartment]);
 
   const handleChange = (e) => {
@@ -76,11 +75,11 @@ export default function Employee() {
   const openAddModal = () => {
     setEditEmployee(null);
     setFormData({
-      firstName: "",
+      fullName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
       department: "",
-      image: "",
+      profileImage: "",
     });
     setShowModal(true);
   };
@@ -89,35 +88,32 @@ export default function Employee() {
     setEditEmployee(emp);
 
     setFormData({
-      firstName: emp.firstName,
+      fullName: emp.fullName,
       email: emp.email,
-      phone: emp.phone,
-      department: emp.company.department,
-      image: emp.image,
+      phoneNumber: emp.phoneNumber,
+      department: emp.department,
+      profileImage: emp.profileImage,
     });
 
     setShowModal(true);
   };
 
   const handleSave = () => {
-    if (!formData.firstName || !formData.email || !formData.phone) {
+    if (!formData.fullName || !formData.email || !formData.phoneNumber) {
       alert("All fields required");
       return;
     }
 
     if (editEmployee) {
       const updated = employees.map((emp) =>
-        emp.id === editEmployee.id
+        emp._id === editEmployee._id
           ? {
               ...emp,
-              firstName: formData.firstName,
+              fullName:formData.fullName,
               email: formData.email,
-              phone: formData.phone,
-              image: formData.image,
-              company: {
-                ...emp.company,
-                department: formData.department,
-              },
+              phoneNumber: formData.phoneNumber,
+              department: formData.department,
+              profileImage: formData.profileImage,
             }
           : emp,
       );
@@ -125,15 +121,12 @@ export default function Employee() {
       setEmployees(updated);
     } else {
       const newEmployee = {
-        id: Date.now(),
-        firstName: formData.firstName,
-        lastName: "",
+        _id: Date.now(),
+        fullName: formData.fullName,
         email: formData.email,
-        phone: formData.phone,
-        image: formData.image,
-        company: {
-          department: formData.department,
-        },
+        phoneNumber: formData.phoneNumber,
+        department: formData.department,
+        profileImage: formData.profileImage,
       };
 
       setEmployees([newEmployee, ...employees]);
@@ -143,7 +136,7 @@ export default function Employee() {
   };
 
   const handleDelete = (id) => {
-    setEmployees(employees.filter((emp) => emp.id !== id));
+    setEmployees(employees.filter((emp) => emp._id !== id));
   };
 
   if (!employees.length) return <Loader />;
@@ -221,7 +214,7 @@ export default function Employee() {
         <div className="space-y-4">
           {filteredEmployees.map((emp) => (
             <div
-              key={emp.id}
+              key={emp._id}
               className={`grid grid-cols-1 md:grid-cols-6 gap-4 items-center px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition ${
                 theme === "light"
                   ? "bg-white"
@@ -230,21 +223,19 @@ export default function Employee() {
             >
               <div>
                 <img
-                  src={emp.image}
+                  src={emp.profileImage}
                   alt=""
                   className="w-14 h-14 rounded-lg object-cover"
                 />
               </div>
 
-              <div className="font-medium">
-                {emp.firstName} {emp.lastName}
-              </div>
+              <div className="font-medium">{emp.fullName}</div>
 
               <div className="break-all">{emp.email}</div>
 
-              <div>{emp.company.department}</div>
+              <div>{emp.department}</div>
 
-              <div>{emp.phone}</div>
+              <div>{emp.phoneNumber}</div>
 
               <div className="flex gap-5">
                 <button
@@ -255,7 +246,7 @@ export default function Employee() {
                 </button>
 
                 <button
-                  onClick={() => handleDelete(emp.id)}
+                  onClick={() => handleDelete(emp._id)}
                   className="text-red-500 hover:scale-110 transition"
                 >
                   <Trash2 size={20} />
@@ -273,9 +264,9 @@ export default function Employee() {
       >
         <div className="flex flex-col gap-3">
           <input
-            name="firstName"
+            name="fullName"
             placeholder="Name"
-            value={formData.firstName}
+            value={formData.fullName}
             onChange={handleChange}
             className={`border p-3 rounded-lg ${inputStyle}`}
           />
@@ -289,9 +280,9 @@ export default function Employee() {
           />
 
           <input
-            name="phone"
+            name="phoneNumber"
             placeholder="Phone"
-            value={formData.phone}
+            value={formData.phoneNumber}
             onChange={handleChange}
             className={`border p-3 rounded-lg ${inputStyle}`}
           />
