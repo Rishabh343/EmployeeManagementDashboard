@@ -7,7 +7,14 @@ import Table from "../common/Table";
 import Loader from "../common/Loader";
 import { Trash2, Search, Pencil } from "lucide-react";
 export default function Employee() {
-  const { employees, setEmployees } = useContext(EmployeeContext);
+  const {
+    employees,
+    addEmployee,
+    updateEmployee,
+    deleteEmployee,
+    searchEmployee,
+    filterEmployee,
+  } = useContext(EmployeeContext);
   const { theme } = useContext(ThemeContext);
 
   const [showModal, setShowModal] = useState(false);
@@ -50,20 +57,20 @@ export default function Employee() {
     return () => clearTimeout(timer);
   }, [searchTerm, selectedDepartment]);
 
-  const filteredEmployees = useMemo(() => {
-    return employees
-      .filter((emp) => {
-        const fullName = `${emp.fullName} `.toLowerCase();
+  // const filteredEmployees = useMemo(() => {
+  //   return employees
+  //     .filter((emp) => {
+  //       const fullName = `${emp.fullName} `.toLowerCase();
 
-        const matchesSearch = fullName.includes(searchTerm.toLowerCase());
+  //       const matchesSearch = fullName.includes(searchTerm.toLowerCase());
 
-        const matchesDepartment =
-          selectedDepartment === "" || emp.department === selectedDepartment;
+  //       const matchesDepartment =
+  //         selectedDepartment === "" || emp.department === selectedDepartment;
 
-        return matchesSearch && matchesDepartment;
-      })
-      .slice(0, 10);    
-  }, [employees, searchTerm, selectedDepartment]);
+  //       return matchesSearch && matchesDepartment;
+  //     })
+  //     .slice(0, 10);
+  // }, [employees, searchTerm, selectedDepartment]);
 
   const handleChange = (e) => {
     setFormData({
@@ -98,45 +105,27 @@ export default function Employee() {
     setShowModal(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.fullName || !formData.email || !formData.phoneNumber) {
       alert("All fields required");
       return;
     }
 
-    if (editEmployee) {
-      const updated = employees.map((emp) =>
-        emp._id === editEmployee._id
-          ? {
-              ...emp,
-              fullName:formData.fullName,
-              email: formData.email,
-              phoneNumber: formData.phoneNumber,
-              department: formData.department,
-              profileImage: formData.profileImage,
-            }
-          : emp,
-      );
+    try {
+      if (editEmployee) {
+        await updateEmployee(editEmployee._id, formData);
+      } else {
+        await addEmployee(formData);
+      }
 
-      setEmployees(updated);
-    } else {
-      const newEmployee = {
-        _id: Date.now(),
-        fullName: formData.fullName,
-        email: formData.email,
-        phoneNumber: formData.phoneNumber,
-        department: formData.department,
-        profileImage: formData.profileImage,
-      };
-
-      setEmployees([newEmployee, ...employees]);
+      setShowModal(false);
+    } catch (error) {
+      console.log(error);
     }
-
-    setShowModal(false);
   };
 
-  const handleDelete = (id) => {
-    setEmployees(employees.filter((emp) => emp._id !== id));
+  const handleDelete = async (id) => {
+    await deleteEmployee(id);
   };
 
   if (!employees.length) return <Loader />;
@@ -163,14 +152,22 @@ export default function Employee() {
                 placeholder="Search employees..."
                 className={`border pl-10 pr-3 py-3 rounded-xl w-full ${inputStyle}`}
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearchTerm(value);
+                  searchEmployee(value);
+                }}
               />
             </div>
 
             <select
               className={`border px-4 py-3 rounded-xl min-w-[220px] ${inputStyle}`}
               value={selectedDepartment}
-              onChange={(e) => setSelectedDepartment(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSelectedDepartment(value);
+                filterEmployee(value);
+              }}
             >
               <option value="">All Departments</option>
 
@@ -206,13 +203,13 @@ export default function Employee() {
 
       {searchLoading ? (
         <Loader />
-      ) : filteredEmployees.length === 0 ? (
+      ) : employees.length === 0 ? (
         <div className="text-center text-xl font-semibold mt-10">
           No Result Found
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredEmployees.map((emp) => (
+          {employees.map((emp) => (
             <div
               key={emp._id}
               className={`grid grid-cols-1 md:grid-cols-6 gap-4 items-center px-6 py-4 rounded-2xl shadow-md hover:shadow-lg transition ${
